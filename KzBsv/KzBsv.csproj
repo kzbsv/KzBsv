@@ -5,12 +5,16 @@
     <RootNamespace>KzBsv</RootNamespace>
     <LangVersion>8.0</LangVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <Authors>TonesNotes</Authors>
     <Company />
     <Description>Bitcoin SV Library</Description>
     <PackageTags>Bitcoin SV BSV</PackageTags>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Copyright />
+    <PackageProjectUrl />
+    <RepositoryUrl>https://github.com/kzbsv/KzBsv</RepositoryUrl>
+    <RepositoryType />
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
