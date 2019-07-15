@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29020.237
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KzBsv", "KzBsv.csproj", "{2360FDEC-B441-489F-B5F4-C00D543629C0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "bricks", "bricks", "{BCFEFE65-10AE-48AE-9C4A-916278A7F623}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{11C71163-4BFD-4C88-9478-DC7AEED17309}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B148BDC7-1DA7-42CE-9FC0-F493891BA6C0}"
+	ProjectSection(SolutionItems) = preProject
+		..\LICENSE = ..\LICENSE
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Secp256k1.Net", "..\bricks\Secp256k1.Net\Secp256k1.Net.csproj", "{4E84C9AB-3FD9-4B68-B268-DD11A75185CB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.KzBsv", "..\tests\Tests.KzBsv\Tests.KzBsv.csproj", "{56FC068C-38E1-4587-9382-23C79C56D5C1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2360FDEC-B441-489F-B5F4-C00D543629C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2360FDEC-B441-489F-B5F4-C00D543629C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2360FDEC-B441-489F-B5F4-C00D543629C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2360FDEC-B441-489F-B5F4-C00D543629C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E84C9AB-3FD9-4B68-B268-DD11A75185CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E84C9AB-3FD9-4B68-B268-DD11A75185CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E84C9AB-3FD9-4B68-B268-DD11A75185CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E84C9AB-3FD9-4B68-B268-DD11A75185CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56FC068C-38E1-4587-9382-23C79C56D5C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56FC068C-38E1-4587-9382-23C79C56D5C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56FC068C-38E1-4587-9382-23C79C56D5C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56FC068C-38E1-4587-9382-23C79C56D5C1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4E84C9AB-3FD9-4B68-B268-DD11A75185CB} = {BCFEFE65-10AE-48AE-9C4A-916278A7F623}
+		{56FC068C-38E1-4587-9382-23C79C56D5C1} = {11C71163-4BFD-4C88-9478-DC7AEED17309}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {13EF753F-C641-4BE1-978C-6587EC3930D2}
+	EndGlobalSection
+EndGlobal
