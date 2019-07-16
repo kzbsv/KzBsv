@@ -5,7 +5,7 @@
     <RootNamespace>KzBsv</RootNamespace>
     <LangVersion>8.0</LangVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.1.1</Version>
+    <Version>0.1.5</Version>
     <Authors>TonesNotes</Authors>
     <Company />
     <Description>Bitcoin SV Library</Description>
@@ -31,14 +31,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\bricks\Secp256k1.Net\Secp256k1.Net.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="..\LICENSE">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\bricks\KzSecp256k1.Net\KzSecp256k1.Net.csproj">
+      <Private>true</Private>
+      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+    </ProjectReference>
   </ItemGroup>
 
 </Project>

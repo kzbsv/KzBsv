@@ -21,8 +21,9 @@
     </PackageReference>
   </ItemGroup>
 
+
   <ItemGroup>
-    <ProjectReference Include="..\Secp256k1.Net\Secp256k1.Net.csproj" />
+    <ProjectReference Include="..\..\bricks\KzSecp256k1.Net\KzSecp256k1.Net.csproj" />
   </ItemGroup>
 
 </Project>

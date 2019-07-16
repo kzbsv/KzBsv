@@ -2,16 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <LangVersion>latest</LangVersion>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-    <Company>Hosho</Company>
-    <Authors>Hosho</Authors>
-    <PackageTags>Secp256k1 libsecp256k1 ECDSA ethereum bitcoin</PackageTags>
+    <Company></Company>
+    <Authors>TonesNotes</Authors>
+    <PackageTags>Secp256k1 libsecp256k1 ECDSA  BSV Bitcoin SV</PackageTags>
     <Description>.NET wrapper for native secp256k1 library</Description>
-    <PackageProjectUrl>https://github.com/hosho/Secp256k1.Net</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/hosho/Secp256k1.Net/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl></PackageProjectUrl>
+    <PackageLicenseUrl></PackageLicenseUrl>
     <NoWarn>1591,1573</NoWarn>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
@@ -20,6 +20,7 @@
     <Version Condition="'$(VersionSuffix)' != ''">0.1.$(VersionSuffix)</Version>
     <Version Condition="'$(VersionSuffix)' == ''">0.1.0</Version>
     <RootNamespace>Secp256k1Net</RootNamespace>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
@@ -47,6 +48,13 @@
       <BuildAction>None</BuildAction>
       <PackagePath>build/</PackagePath>
     </_PackageFiles>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
   
   
