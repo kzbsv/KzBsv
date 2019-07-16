@@ -5,7 +5,7 @@
     <RootNamespace>KzBsv</RootNamespace>
     <LangVersion>8.0</LangVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.1.5</Version>
+    <Version>0.1.6</Version>
     <Authors>TonesNotes</Authors>
     <Company />
     <Description>Bitcoin SV Library</Description>
