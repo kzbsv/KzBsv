@@ -42,7 +42,7 @@ namespace Tests.KzBsv
 
         static string _RawBlocksFolder {
             get {
-                var p = @"..\..\..\..\data\RawBlocks";
+                var p = @"..\..\..\data\RawBlocks";
                 return p;
             }
         }

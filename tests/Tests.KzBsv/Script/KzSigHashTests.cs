@@ -46,7 +46,7 @@ namespace Tests.KzBsv
         public KzSigHashTests()
         {
             var tvs = new List<TestVector>();
-            var json = JArray.Parse(File.ReadAllText(@"..\..\..\..\data\sighash.json"));
+            var json = JArray.Parse(File.ReadAllText(@"..\..\..\data\sighash.json"));
             foreach (var r in json.Children<JToken>().Where(c => c.Count() >= 7)) {
                     var rawTx = r[0].Value<string>();
                     var script = r[1].Value<string>();

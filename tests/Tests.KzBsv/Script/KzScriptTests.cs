@@ -145,7 +145,7 @@ namespace Tests.KzBsv
         public void Scripts()
         {
             var tv2s = new List<TV2>();
-            var json = JArray.Parse(File.ReadAllText(@"..\..\..\..\data\script_tests.json"));
+            var json = JArray.Parse(File.ReadAllText(@"..\..\..\data\script_tests.json"));
             foreach (var r in json.Children<JToken>().Where(c => c.Count() >= 4)) {
                 if (r[0].Type == JTokenType.String) {
                     var sig = r[0].Value<string>();
