@@ -7,7 +7,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>0.1.6</Version>
     <Authors>TonesNotes</Authors>
-    <Company />
+    <Company>kzbsv.org</Company>
     <Description>Bitcoin SV Library</Description>
     <PackageTags>Bitcoin SV BSV</PackageTags>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>

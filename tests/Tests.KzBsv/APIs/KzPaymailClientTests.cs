@@ -22,16 +22,22 @@ namespace Tests.KzBsv
         [Fact]
         public async Task GetPubKey()
         {
-
-            var paymail = "testpaymail@kizmet.org"; // returns "02fe6a13c0734578b77d28680aac58a78eb1722dd654117451b8820c9380b10e68", {14XVCmcKEuxzZRRSKvqhBgRj843wUGQbbz}
-            //var paymail = "tonesnotes@moneybutton.com"; // returns "02e36811b6a8db1593aa5cf97f91dd2211af1c38b9890567e58367945137dca8ef"   
             var r = new KzPaymailClient();
-            var k = await r.GetPubKey(paymail);
 
-            //var privkey = KzElectrumSv.GetMasterPrivKey("<replace with actual wallet seed>").Derive($"0/{int.MaxValue}").PrivKey;
-            var privkey = KzPrivKey.FromB58("KxXvocKqZtdHvZP5HHNShrwDQVz2muNPisrzoyeyhXc4tZhBj1nM");
-            var pubkey = privkey.GetPubKey();
-            Assert.Equal(k, pubkey);
+            foreach (var tc in new []
+            {
+                new { p = "kzpaymailasp@kzbsv.org", k = "02c4aa80834a289b43870b56a6483c924b57650eebe6e5185b19258c76656baa35" },
+                new { p = "testpaymail@kizmet.org", k = "02fe6a13c0734578b77d28680aac58a78eb1722dd654117451b8820c9380b10e68" },
+                new { p = "tonesnotes@moneybutton.com", k = "02e36811b6a8db1593aa5cf97f91dd2211af1c38b9890567e58367945137dca8ef" },   
+            })
+            {
+                //var privkey = KzElectrumSv.GetMasterPrivKey("<replace with actual wallet seed>").Derive($"0/{int.MaxValue}").PrivKey;
+                //var privkey = KzPrivKey.FromB58("KxXvocKqZtdHvZP5HHNShrwDQVz2muNPisrzoyeyhXc4tZhBj1nM");
+                //var pubkey = privkey.GetPubKey();
+                var pubkey = new KzPubKey(tc.k);
+                var k = await r.GetPubKey(tc.p);
+                Assert.Equal(k, pubkey);
+            }
         }
 
         [Fact]
@@ -41,6 +47,7 @@ namespace Tests.KzBsv
 
             foreach (var tc in new []
             {
+                new { r = true, p = "kzpaymailasp@kzbsv.org", k = "02c4aa80834a289b43870b56a6483c924b57650eebe6e5185b19258c76656baa35" },
                 new { r = true, p = "testpaymail@kizmet.org", k = "02fe6a13c0734578b77d28680aac58a78eb1722dd654117451b8820c9380b10e68" },
                 new { r = true, p = "tonesnotes@moneybutton.com", k = "02e36811b6a8db1593aa5cf97f91dd2211af1c38b9890567e58367945137dca8ef" },   
                 new { r = false, p = "testpaymail@kizmet.org", k = "02e36811b6a8db1593aa5cf97f91dd2211af1c38b9890567e58367945137dca8ef" },

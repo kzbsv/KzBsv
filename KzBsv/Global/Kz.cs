@@ -58,19 +58,19 @@ namespace KzBsv
         /// <summary>
         /// Base58 encoding prefix for script addresses for the active network.
         /// </summary>
-        public static ReadOnlySpan<byte> SCRIPT_ADDRESS=> Params.Base58Prefix(KzBase58Type.SCRIPT_ADDRESS);
+        public static ReadOnlySpan<byte> SCRIPT_ADDRESS => Params.Base58Prefix(KzBase58Type.SCRIPT_ADDRESS);
         /// <summary>
         /// Base58 encoding prefix for private keys for the active network.
         /// </summary>
-        public static ReadOnlySpan<byte> SECRET_KEY=> Params.Base58Prefix(KzBase58Type.SECRET_KEY);
+        public static ReadOnlySpan<byte> SECRET_KEY => Params.Base58Prefix(KzBase58Type.SECRET_KEY);
         /// <summary>
         /// Base58 encoding prefix for extended public keys for the active network.
         /// </summary>
-        public static ReadOnlySpan<byte> EXT_PUBLIC_KEY=> Params.Base58Prefix(KzBase58Type.EXT_PUBLIC_KEY);
+        public static ReadOnlySpan<byte> EXT_PUBLIC_KEY => Params.Base58Prefix(KzBase58Type.EXT_PUBLIC_KEY);
         /// <summary>
         /// Base58 encoding prefix for extended private keys for the active network.
         /// </summary>
-        public static ReadOnlySpan<byte> EXT_SECRET_KEY=> Params.Base58Prefix(KzBase58Type.EXT_SECRET_KEY);
+        public static ReadOnlySpan<byte> EXT_SECRET_KEY => Params.Base58Prefix(KzBase58Type.EXT_SECRET_KEY);
 
         public static void CreateChainParams(KzChain chain)
         {
