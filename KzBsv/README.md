@@ -2,6 +2,7 @@ KzBsv
 =
 
 [![NuGet](https://img.shields.io/nuget/v/KzBsv.svg)](https://www.nuget.org/packages/KzBsv)
+[![NuGet](https://img.shields.io/telegram/v/KzBsv.svg)](https://t.me/KzBsv)
 
 A C# Bitcoin SV library for .NET Core 3.0
 
