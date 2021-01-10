@@ -5,10 +5,8 @@
 using System;
 using System.Buffers;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Numerics;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace KzBsv {
@@ -388,7 +386,6 @@ namespace KzBsv {
         /// CAUTION: Will pad array with zero bytes if number is small.
         /// </summary>
         /// <param name="big"></param>
-        /// <param name="length"></param>
         /// <returns></returns>
         static string BigIntegerToBase6(BigInteger big)
         {
@@ -451,7 +448,7 @@ namespace KzBsv {
         /// <returns>Returns the entropy as a byte[] from a string of base 6 digits.</returns>
         static byte[] Base6ToEntropy(string base6, int length = 128)
         {
-            var needDigits = (int)Math.Ceiling(length / Math.Log2(6));
+            var needDigits = (int)Math.Ceiling(length / Math.Log(6, 2));
             if (base6.Length < needDigits)
                 throw new ArgumentException($"For {length} bits of entropy, at least {needDigits} digits of base 6 are needed.");
             return BigIntegerToEntropy(Base6ToBigInteger(base6), length);
@@ -468,7 +465,7 @@ namespace KzBsv {
         /// <returns>Returns the entropy as a byte[] from a string of base 10 digits.</returns>
         static byte[] Base10ToEntropy(string base10, int length = 128)
         {
-            var needDigits = (int)Math.Ceiling(length / Math.Log2(10));
+            var needDigits = (int)Math.Ceiling(length / Math.Log(10, 2));
             if (base10.Length < needDigits)
                 throw new ArgumentException($"For {length} bits of entropy, at least {needDigits} digits of base 10 are needed.");
             return BigIntegerToEntropy(Base10ToBigInteger(base10), length);
