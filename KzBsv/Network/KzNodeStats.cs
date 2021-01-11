@@ -47,6 +47,7 @@ namespace KzBsv.Network
 
     class KzNodeStats
     {
+#if false
         long nodeid;
         ServiceFlags nServices;
         bool fRelayTxes;
@@ -72,6 +73,7 @@ namespace KzBsv.Network
         string addrLocal;
         //CAddress addr;
         uint nInvQueueSize;
+#endif
     };
 
 }

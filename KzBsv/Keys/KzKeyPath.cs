@@ -1,8 +1,9 @@
 ﻿#region Copyright
-// Copyright (c) 2019 TonesNotes
+// Copyright (c) 2020 TonesNotes
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 #endregion
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -57,17 +58,27 @@ namespace KzBsv {
 
         static UInt32[] ParseIndices(string path)
         {
-			return path.Split('/').Where(p => p != "m" && p != "M").Select(ParseIndex).ToArray();
+			return path.Split('/').Where(p => p != "m" && p != "M" && p != "").Select(ParseIndex).ToArray();
         }
 
-		/// <summary>
-		/// Parse a KzHDKeyPath
-		/// </summary>
-		/// <param name="path">The KzHDKeyPath formated like a/b/c'/d. Appostrophe indicates hardened/private. a,b,c,d must convert to 0..2^31.
+        /// <summary>
+        /// Returns a sequence of KzKeyPaths from comma separated string of paths.
+        /// </summary>
+        /// <param name="v">Comma separated string of paths.</param>
+        /// <returns></returns>
+        public static IEnumerable<KzKeyPath> AsEnumerable(string v) {
+            foreach (var kp in v.Split(','))
+                yield return new KzKeyPath(kp);
+        }
+
+        /// <summary>
+        /// Parse a KzHDKeyPath
+        /// </summary>
+        /// <param name="path">The KzHDKeyPath formated like a/b/c'/d. Appostrophe indicates hardened/private. a,b,c,d must convert to 0..2^31.
         /// Optionally the path can start with "m/" for private extended master key derivations or "M/" for public extended master key derivations.
         /// </param>
-		/// <returns></returns>
-		public static KzKeyPath Parse(string path)
+        /// <returns></returns>
+        public static KzKeyPath Parse(string path)
 		{
 			return new KzKeyPath(path);
 		}

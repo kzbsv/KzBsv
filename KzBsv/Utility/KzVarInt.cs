@@ -1,5 +1,5 @@
 ﻿#region Copyright
-// Copyright (c) 2019 TonesNotes
+// Copyright (c) 2020 TonesNotes
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 #endregion
 using System;
@@ -27,19 +27,19 @@ namespace KzBsv
                 case 1:
                     bytes[0] = s[0];
                     break;
-                case 2:
+                case 3:
                     bytes[0] = prefix;
                     bytes[1] = s[0];
                     bytes[2] = s[1];
                     break;
-                case 4:
+                case 5:
                     bytes[0] = prefix;
                     bytes[1] = s[0];
                     bytes[2] = s[1];
                     bytes[3] = s[2];
                     bytes[4] = s[3];
                     break;
-                case 8:
+                case 9:
                     bytes[0] = prefix;
                     bytes[1] = s[0];
                     bytes[2] = s[1];
@@ -62,9 +62,9 @@ namespace KzBsv
             var prefix = (byte)0;
             var uv = (ulong)value;
             if (uv <= 0xfc) goto done;
-            if (uv <= 0xffff) { len = 2; prefix = 0xfd; goto done; }
-            if (uv <= 0xffff_ffff) { len = 4; prefix = 0xfe; goto done; }
-            len = 8; prefix = 0xff;
+            if (uv <= 0xffff) { len = 3; prefix = 0xfd; goto done; }
+            if (uv <= 0xffff_ffff) { len = 5; prefix = 0xfe; goto done; }
+            len = 9; prefix = 0xff;
         done:
             return (len, prefix);
         }

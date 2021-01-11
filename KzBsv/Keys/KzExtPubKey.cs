@@ -1,5 +1,5 @@
 ﻿#region Copyright
-// Copyright (c) 2019 TonesNotes
+// Copyright (c) 2020 TonesNotes
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 #endregion
 using System;
@@ -14,6 +14,12 @@ namespace KzBsv
         KzPubKey pubkey;
 
         public KzPubKey PubKey => pubkey;
+
+        public KzExtPubKey() { }
+
+        public KzExtPubKey(ReadOnlySpan<byte> code) {
+            Decode(code);
+        }
 
         public static KzExtPubKey FromPriv(KzExtPrivKey priv)
         {
@@ -47,6 +53,12 @@ namespace KzBsv
             bool ok;
             (ok, cek.pubkey, cek._chaincode) = pubkey.Derive(cek._child, _chaincode);
             return ok ? cek : null;
+        }
+
+        public byte[] GetBytes() {
+            var bytes = new byte[KzExtPubKey.BIP32_EXTKEY_SIZE];
+            Encode(bytes);
+            return bytes;
         }
 
         public override void Encode(Span<byte> code)

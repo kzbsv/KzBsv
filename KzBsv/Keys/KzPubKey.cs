@@ -1,5 +1,5 @@
 ﻿#region Copyright
-// Copyright (c) 2019 TonesNotes
+// Copyright (c) 2020 TonesNotes
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 #endregion
 using Secp256k1Net;
@@ -65,8 +65,13 @@ namespace KzBsv
             return 0;
         }
 
+        public static int MinLength => 33;
+        public static int MaxLength => 65;
+
         public ReadOnlySpan<byte> ReadOnlySpan => _vch;
         public Span<byte> Span => _vch;
+
+        public byte[] GetBytes() => ReadOnlySpan.ToArray();
 
         public void Set(ReadOnlySpan<byte> data)
         {
@@ -158,7 +163,7 @@ namespace KzBsv
 
         public bool Verify(KzUInt256 hash, ReadOnlySpan<byte> sig)
         {
-            if (!IsValid) return false;
+            if (!IsValid || sig.Length == 0) return false;
 
             return secp256k1.PublicKeyVerify(hash.Span, sig, _vch.AsSpan());
         }

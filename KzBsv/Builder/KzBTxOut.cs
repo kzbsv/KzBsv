@@ -1,5 +1,5 @@
 ﻿#region Copyright
-// Copyright (c) 2019 TonesNotes
+// Copyright (c) 2020 TonesNotes
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 #endregion
 namespace KzBsv
@@ -16,7 +16,7 @@ namespace KzBsv
         public KzBTxOut(KzTxOut txOut)
         {
             Value = txOut.Value;
-            ScriptPub.Set(txOut.ScriptPubKey);
+            ScriptPub.Set(txOut.ScriptPub);
         }
 
         public static KzBTxOut ToP2PKH(KzPubKey pubKey, KzAmount value)

@@ -1,5 +1,5 @@
 ﻿#region Copyright
-// Copyright (c) 2019 TonesNotes
+// Copyright (c) 2020 TonesNotes
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 #endregion
 using System;
@@ -133,7 +133,7 @@ namespace KzBsv
         void AddTransaction(KzTransaction tx)
         {
             _count++;
-            var newHash = tx.TxId;
+            var newHash = tx.HashTx;
             if (_count == 1)
             {
                 // First transaction.

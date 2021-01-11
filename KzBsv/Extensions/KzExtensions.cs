@@ -1,5 +1,5 @@
 ﻿#region Copyright
-// Copyright (c) 2019 TonesNotes
+// Copyright (c) 2020 TonesNotes
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 #endregion
 using System;
@@ -12,6 +12,9 @@ namespace KzBsv
 {
     public static class KzExtensions
     {
+        public static KzAmount ToKzAmount(this long value) => new KzAmount(value);
+        public static KzAmount ToKzAmount(this decimal amount, KzBitcoinUnit unit) => new KzAmount(amount, unit);
+
         public static KzUInt256 ToKzUInt256(this ReadOnlySpan<byte> span) => new KzUInt256(span);
         public static KzUInt256 ToKzUInt256(this string hex, bool firstByteFirst = false) => new KzUInt256(hex, firstByteFirst);
         public static KzScript ToKzScript(this string hex) => new KzScript(hex);
@@ -21,7 +24,7 @@ namespace KzBsv
         /// </summary>
         /// <param name="script"></param>
         /// <returns>Sequence of builder BOps</returns>
-        public static IEnumerable<KzBOp> ToBOps(this KzScript script) => script.Decode().Cast<KzBOp>();
+        public static IEnumerable<KzBOp> ToBOps(this KzScript script) => script.Decode().Select(o => new KzBOp(o));
 
         /// <summary>
         /// Returns a KzUInt256 initialized with up to 32 bytes from data.
@@ -212,17 +215,56 @@ namespace KzBsv
             return h;
         }
 
+        public static bool IsNullOrWhiteSpace(this string s) => string.IsNullOrWhiteSpace(s);
+        public static bool IsNullOrEmpty(this string s) => string.IsNullOrEmpty(s);
+        /// <summary>
+        /// IsNullOrWhiteSpace: String is null, empty, or only white space characters.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static bool IsBlank(this string s) => string.IsNullOrWhiteSpace(s);
+        /// <summary>
+        /// !IsNullOrWhiteSpace: String contains non white space characters.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static bool IsNotBlank(this string s) => !string.IsNullOrWhiteSpace(s);
+
         public static byte[] HexToBytes(this string s) => KzEncoders.Hex.Decode(s);
+        public static byte[] HexRToBytes(this string s) => KzEncoders.HexReverse.Decode(s);
         public static byte[] ASCIIToBytes(this string s) => Encoding.ASCII.GetBytes(s);
         public static byte[] UTF8ToBytes(this string s) => Encoding.UTF8.GetBytes(s);
+        public static byte[] UTF8NFKDToBytes(this string s) => Encoding.UTF8.GetBytes(s.Normalize(NormalizationForm.FormKD));
         public static byte[] Base64ToBytes(this string s) => Convert.FromBase64String(s);
 
+        public static string ToUTF8(this byte[] a) => Encoding.UTF8.GetString(a);
+
+        public static string ToHex(this Span<byte> s) => KzEncoders.Hex.Encode(s);
         public static string ToHex(this ReadOnlySequence<byte> s) => KzEncoders.Hex.Encode(s);
         public static string ToHex(this ReadOnlySpan<byte> s) => KzEncoders.Hex.Encode(s);
         public static string ToHex(this byte[] a) => KzEncoders.Hex.Encode(a);
+        public static string ToHexR(this byte[] a) => KzEncoders.HexReverse.Encode(a);
+
+        public static int ToInt32LittleEndian(this Span<byte> s) => ConvertToInt32LittleEndian(s);
+        public static int ToInt32LittleEndian(this ReadOnlySpan<byte> s) => ConvertToInt32LittleEndian(s);
+
+        public static int ToInt32BigEndian(this Span<byte> s) => ConvertToInt32BigEndian(s);
+        public static int ToInt32BigEndian(this ReadOnlySpan<byte> s) => ConvertToInt32BigEndian(s);
+
+        static int ConvertToInt32LittleEndian(ReadOnlySpan<byte> s) {
+            if (s.Length < 4) throw new InvalidOperationException("Requires four bytes");
+            return s[0] + (s[1] << 8) + (s[2] << 16) + (s[3] << 24);
+        }
+
+        static int ConvertToInt32BigEndian(ReadOnlySpan<byte> s) {
+            if (s.Length < 4) throw new InvalidOperationException("Requires four bytes");
+            return s[3] + (s[2] << 8) + (s[1] << 16) + (s[0] << 24);
+        }
 
         public static byte[] AsVarIntBytes(this int v) => KzVarInt.AsBytes(v);
         public static byte[] AsVarIntBytes(this long v) => KzVarInt.AsBytes(v);
+
+        public static DateTime DateTimeFromUnixTime(this long seconds) => DateTime.UnixEpoch + TimeSpan.FromSeconds(seconds);
 
         public static (List<T> t, List<T> f) Partition<T>(this IEnumerable<T> s, Func<T, bool> predicate)
         {

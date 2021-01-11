@@ -1,5 +1,5 @@
 ﻿#region Copyright
-// Copyright (c) 2019 TonesNotes
+// Copyright (c) 2020 TonesNotes
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 #endregion
 using Newtonsoft.Json;
@@ -10,8 +10,8 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KzBsv
-{
+namespace KzBsv {
+
     public class KzApiWhatsOnChain
     {
         HttpClient _HttpClient;
@@ -94,6 +94,12 @@ namespace KzBsv
             public long blocktime;
         }
 
+        public class ExchangeRate
+        {
+            public string currency;
+            public decimal rate;
+        }
+
         async public Task<KzTransaction> GetTransactionsByHash(KzUInt256 txId)
         {
             var url = $"https://api.whatsonchain.com/v1/bsv/{Kz.Params.strNetworkID}/tx/hash/{txId}";
@@ -107,6 +113,19 @@ namespace KzBsv
             if (!tx.TryReadTransaction(ref ros))
                 tx = null;
             return tx;
+        }
+
+        async public Task<decimal> GetExchangeRate()
+        {
+            var url = $"https://api.whatsonchain.com/v1/bsv/{Kz.Params.strNetworkID}/exchangerate";
+
+            var json = await _HttpClient.GetStringAsync(url);
+
+            // json == {"currency":"USD","rate":"174.04999999999998"}
+
+            var er = JsonConvert.DeserializeObject<ExchangeRate>(json);
+
+            return er.rate;
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿#region Copyright
-// Copyright (c) 2019 TonesNotes
+// Copyright (c) 2020 TonesNotes
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 #endregion
 using System;
@@ -54,6 +54,17 @@ namespace KzBsv
             return bytes;
         }
 
+        /// <summary>
+        /// Return first four bytes as a big endian integer.
+        /// </summary>
+        /// <returns></returns>
+        public UInt32 AsUInt32BigEndian() {
+            var r = GetReader();
+            if (r.TryReadBigEndian(out Int32 v) == false)
+                throw new InvalidOperationException();
+            return (UInt32)v;
+        }
+
         public byte[] ToBytes()
         {
             var bytes = new byte[_sequence.Length];
@@ -94,10 +105,7 @@ namespace KzBsv
             return new KzScriptNum(ToSpan(), fRequireMinimal);
         }
 
-        public Int32 ToInt32()
-        {
-            return new KzScriptNum(ToSpan()).getint();
-        }
+        public Int32 ToInt32() => new KzScriptNum(ToSpan()).getint();
 
         public KzValType BitAnd(KzValType b)
         {
@@ -330,5 +338,11 @@ namespace KzBsv
             var x2 = new KzValType(s.Slice(position).ToArray());
             return (x1, x2);
         }
+
+        public override int GetHashCode() => _sequence.GetHashCode();
+        public override bool Equals(object obj) => obj is KzValType && this == (KzValType)obj;
+        public bool Equals(KzValType op) => _sequence.ToSpan().SequenceEqual(op._sequence.ToSpan());
+        public static bool operator ==(KzValType x, KzValType y) => x.Equals(y);
+        public static bool operator !=(KzValType x, KzValType y) => !(x == y);
     }
 }

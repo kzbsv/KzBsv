@@ -1,5 +1,5 @@
 ﻿#region Copyright
-// Copyright (c) 2019 TonesNotes
+// Copyright (c) 2020 TonesNotes
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 #endregion
 using System;
@@ -109,6 +109,8 @@ namespace KzBsv
             return w;
         }
 
+        public byte[] GetDataBytes() => _data.Sequence.ToArray();
+
         public byte[] GetBytes()
         {
             var bytes = new byte[Length];
@@ -157,6 +159,12 @@ namespace KzBsv
                 return true;
             }
         */
+
+        public static (bool ok, KzOp op) TryRead(ref ReadOnlySequence<byte> ros, out long consumed) {
+            var op = new KzOp();
+            var ok = op.TryReadOp(ref ros, out consumed);
+            return (ok, op);
+        }
 
         public bool TryReadOp(ref ReadOnlySequence<byte> ros) => TryReadOp(ref ros, out _);
 
@@ -386,5 +394,12 @@ namespace KzBsv
             }
             return s;
         }
+
+        public override int GetHashCode() => Code.GetHashCode() ^ Data.GetHashCode();
+        public override bool Equals(object obj) => obj is KzOp && this == (KzOp)obj;
+        public bool Equals(KzOp op) => Code == op.Code && Data == op.Data;
+        public static bool operator ==(KzOp x, KzOp y) => x.Equals(y);
+        public static bool operator !=(KzOp x, KzOp y) => !(x == y);
+
     }
 }

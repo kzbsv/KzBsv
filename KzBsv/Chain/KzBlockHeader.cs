@@ -1,5 +1,5 @@
 ﻿#region Copyright
-// Copyright (c) 2019 TonesNotes
+// Copyright (c) 2020 TonesNotes
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 #endregion
 using System;
@@ -10,9 +10,17 @@ using System.Security.Cryptography;
 namespace KzBsv
 {
 
+    /// <summary>
+    /// Closely mirrors the data and layout of a serialized Bitcoin block header.
+    /// Focus is on efficiency when processing large blocks.
+    /// Not intended to facilitate making dynamic changes to a block header (mining).
+    /// Includes the following meta data in addition to standard Bitcoin block header data:
+    /// <list type="table">
+    /// <item><term>Height</term><description>The chain height associated with this block.</description></item>
+    /// </list>
+    /// </summary>
     public class KzBlockHeader
     {
-
         public const int BlockHeaderSize = 80;
 
         /// Essential fields of a Bitcoin SV block header.
@@ -26,15 +34,13 @@ namespace KzBsv
 
         /// The following fields are computed or external, not essential.
 
-        public DateTime TimeWhen { get; private set; }
+        public DateTime TimeWhen => DateTime.UnixEpoch + TimeSpan.FromSeconds(_time);
 
         KzUInt256 _hash;
         public KzUInt256 Hash => _hash;
 
         public Int32 Height { get; set; }
 
-        public Int64 Fees { get; set; }
-        
         /// Public access to essential header fields.
 
         public Int32 Version => _version;
@@ -103,8 +109,6 @@ namespace KzBsv
                 var hash2 = sha256.ComputeHash(hash1);
                 hash2.CopyTo(_hash.Span);
             }
-
-            TimeWhen = DateTime.UnixEpoch + TimeSpan.FromSeconds(_time);
 
             return true;
         fail:

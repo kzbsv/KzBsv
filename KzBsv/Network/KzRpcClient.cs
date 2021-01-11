@@ -1,5 +1,5 @@
 ﻿#region Copyright
-// Copyright (c) 2019 TonesNotes
+// Copyright (c) 2020 TonesNotes
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 #endregion
 using Newtonsoft.Json;
@@ -11,11 +11,13 @@ using System.Net;
 using System.Text;
 
 namespace KzBsv {
-	public class KzRpcClient {
+    public class KzRpcClient {
 		string _auth;
 		Uri _uri;
 
-		public KzRpcClient(string auth, Uri uri) {
+        public Uri Uri => _uri;
+
+        public KzRpcClient(string auth, Uri uri) {
 			_auth = auth;
 			_uri = uri;
 		}
@@ -65,6 +67,22 @@ namespace KzBsv {
 			return jo;
 		}
 
+		public KzRpcResponse<T> SendCommand<T>(string method, params object[] args) {
+			var webRequest = SendCommandRaw(method, args);
+            try {
+                var webResponse = webRequest.GetResponse();
+                using (var sr = new StreamReader(webResponse.GetResponseStream())) {
+                    var json = sr.ReadToEnd();
+                    var result = JsonConvert.DeserializeObject<KzRpcResponse<T>>(json);
+                    return result;
+                }
+            } catch (Exception ex) {
+				return new KzRpcResponse<T> {
+					error = ex.Message
+				};
+            }
+        }
+
 		public KzUInt256 GetBestBlockHash() {
 			var jo = SendCommand("getbestblockhash");
 			var error = jo.GetValue("error") as JObject;
@@ -76,6 +94,10 @@ namespace KzBsv {
 		public KzBlockchainInfo GetBlockchainInfo() {
 			return new KzBlockchainInfo(SendCommand("getblockchaininfo"));
 		}
+
+		public KzRpcResponse<KzRpcPeerInfo[]> GetPeerInfo() => SendCommand<KzRpcPeerInfo[]>("getpeerinfo");
+
+		public KzRpcResponse<object> SetBan(string addr) => SendCommand<object>("setban", addr.Split(':')[0], "add");
 
 		public string GetBlockHash(long height) {
 			return SendCommand("getblockhash", height).GetValue("result").Value<string>();
@@ -111,7 +133,8 @@ namespace KzBsv {
                     return (true, txId);
                 }
             }
-            catch {
+            catch (Exception e) {
+				var m = e.Message;
             }
             return (false, KzUInt256.Zero);
         }
@@ -247,4 +270,11 @@ namespace KzBsv {
 			}
 		}
 	}
+
+	public class KzRpcResponse<T> {
+		public string error { get; set; }
+		public long id { get; set; }
+		public T result { get; set; }
+	}
+
 }

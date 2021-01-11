@@ -1,4 +1,8 @@
-﻿using DnsClient;
+﻿#region Copyright
+// Copyright (c) 2020 TonesNotes
+// Distributed under the Open BSV software license, see the accompanying file LICENSE.
+#endregion
+using DnsClient;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;

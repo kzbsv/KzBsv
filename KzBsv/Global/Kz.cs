@@ -1,5 +1,5 @@
 ﻿#region Copyright
-// Copyright (c) 2019 TonesNotes
+// Copyright (c) 2020 TonesNotes
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 #endregion
 using System;
@@ -46,7 +46,7 @@ namespace KzBsv
         /// </summary>
         public static KzEncodeHexReverse HexR => KzEncoders.HexReverse;
 
-        public static string SetMasterSeed = "Bitcoin seed";
+        public static string MasterBip32Key = "Bitcoin seed";
 
         public static KzBScript Script() => new KzBScript();
         public static KzBTransaction Tx() => new KzBTransaction();

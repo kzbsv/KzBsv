@@ -1,5 +1,5 @@
 ﻿#region Copyright
-// Copyright (c) 2019 TonesNotes
+// Copyright (c) 2020 TonesNotes
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 #endregion
 namespace KzBsv
@@ -9,7 +9,7 @@ namespace KzBsv
         public KzBScriptPubP2PKH(KzUInt160 pubKeyHash)
         {
             IsPub = true;
-            _type = KzBScriptType.P2PKH;
+            _TemplateId = KzScriptTemplateId.P2PKH;
             this
                 .Add(KzOpcode.OP_DUP)
                 .Add(KzOpcode.OP_HASH160)
@@ -25,9 +25,9 @@ namespace KzBsv
         public KzBScriptSigP2PKH(KzPubKey pubKey)
         {
             IsPub = false;
-            _type = KzBScriptType.P2PKH;
+            _TemplateId = KzScriptTemplateId.P2PKH;
             this
-                .Push() // This will become the CHECKSIG signature
+                .Push(new byte[72]) // This will become the CHECKSIG signature
                 .Push(pubKey.Span)
                 ;
         }

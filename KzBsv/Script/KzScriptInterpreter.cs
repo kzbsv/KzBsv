@@ -1,5 +1,5 @@
 ﻿#region Copyright
-// Copyright (c) 2019 TonesNotes
+// Copyright (c) 2020 TonesNotes
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 #endregion
 using System;
@@ -87,6 +87,10 @@ namespace KzBsv
         public bool isBaseSingle => ((int)_sigHash & 0x1f) == (int)KzBaseSigHashType.SINGLE;
 
         public UInt32 getForkValue() { return (UInt32)_sigHash >> 8; }
+
+        public override string ToString() {
+            return string.Empty;
+        }
     }
 
     public static partial class KzScriptInterpreter

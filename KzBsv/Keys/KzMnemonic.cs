@@ -1,5 +1,5 @@
 ﻿#region Copyright
-// Copyright (c) 2019 TonesNotes
+// Copyright (c) 2020 TonesNotes
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 #endregion
 using System;
@@ -49,7 +49,7 @@ namespace KzBsv {
         /// </summary>
         public string[] WordList { get; private set; }
         /// <summary>
-        /// The binary data for which Words is a transcription safe encoding.
+        /// The binary data for which Words is a transcription safe encoding, or null on checksum error.
         /// </summary>
         public byte[] Entropy { get; private set; }
 

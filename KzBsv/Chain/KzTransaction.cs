@@ -1,5 +1,5 @@
 ﻿#region Copyright
-// Copyright (c) 2019 TonesNotes
+// Copyright (c) 2020 TonesNotes
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 #endregion
 using System;
@@ -10,6 +10,19 @@ using System.Security.Cryptography;
 namespace KzBsv
 {
 
+    /// <summary>
+    /// Closely mirrors the data and layout of a Bitcoin transaction as stored in each block.
+    /// Focus is on performance when processing large numbers of transactions, including blocks of transactions.
+    /// In particular, script data is stored as <see cref="ReadOnlySequence{Byte}"/> allowing large scripts to
+    /// remain in whatever buffers were originally used. No script parsing data is maintained. 
+    /// Not intended for making dynamic changes to a transaction (adding inputs, outputs, signing).
+    /// See <see cref="KzBTransaction"/> when dynamically building a transaction to send.
+    /// In addition, transactions associated with specific wallets should consider KzWallets.KzWdbTx for transaction data.
+    /// Includes the following pre-computed meta data in addition to standard Bitcoin transaction data:
+    /// <list type="table">
+    /// <item><term>HashTx</term><description>Transaction's hash.</description></item>
+    /// </list>
+    /// </summary>
     public class KzTransaction
     {
 
@@ -22,9 +35,9 @@ namespace KzBsv
 
         /// The following fields are computed or external, not essential.
 
-        KzUInt256 _txId;
-        Int64 _valueIn;
-        Int64 _valueOut;
+        KzUInt256 _hashTx;
+        //Int64 _valueIn;
+        //Int64 _valueOut;
 
         /// Public access to essential header fields.
 
@@ -36,9 +49,7 @@ namespace KzBsv
 
         /// Public access to computed or external, not essential.
 
-        public KzUInt256 TxId => _txId;
-        public Int64 ValueIn { get => _valueIn; set => _valueIn = value; }
-        public Int64 ValueOut { get => _valueOut; set => _valueOut = value; }
+        public KzUInt256 HashTx => _hashTx;
 
         public KzTransaction() { }
 
@@ -66,6 +77,53 @@ namespace KzBsv
             ros = ros.Slice(r.Consumed);
 
             return true;
+        fail:
+            return false;
+        }
+
+        public bool TryParseTransaction(ref SequenceReader<byte> r, IKzBlockParser bp)
+        {
+            var offset = r.Consumed;
+            var start = r.Position;
+
+            if (!r.TryReadLittleEndian(out _version)) goto fail;
+            if (!r.TryReadVarint(out long countIn)) goto fail;
+
+            bp.TxStart(this, offset);
+
+            _vin = new KzTxIn[countIn];
+            for (var i = 0L; i < countIn; i++)
+            {
+                ref var txin = ref _vin[i];
+                if (!txin.TryParseTxIn(ref r, bp)) goto fail;
+            }
+
+            if (!r.TryReadVarint(out long countOut)) goto fail;
+
+            _vout = new KzTxOut[countOut];
+            for (var i = 0L; i < countOut; i++)
+            {
+                ref var txout = ref _vout[i];
+                if (!txout.TryParseTxOut(ref r, bp)) goto fail;
+            }
+
+            if (!r.TryReadLittleEndian(out _lockTime)) goto fail;
+
+            var end = r.Position;
+
+            // Compute the transaction hash.
+            var txBytes = r.Sequence.Slice(start, end).ToArray();
+            using (var sha256 = SHA256.Create())
+            {
+                var hash1 = sha256.ComputeHash(txBytes);
+                var hash2 = sha256.ComputeHash(hash1);
+                hash2.CopyTo(_hashTx.Span);
+            }
+
+            bp.TxParsed(this, r.Consumed);
+
+            return true;
+
         fail:
             return false;
         }
@@ -103,7 +161,7 @@ namespace KzBsv
             {
                 var hash1 = sha256.ComputeHash(txBytes);
                 var hash2 = sha256.ComputeHash(hash1);
-                hash2.CopyTo(_txId.Span);
+                hash2.CopyTo(_hashTx.Span);
             }
 
             return true;
@@ -123,7 +181,7 @@ namespace KzBsv
 
         public override string ToString()
         {
-            return TxId.ToString();
+            return HashTx.ToString();
         }
 
         public IKzWriter AddTo(IKzWriter writer)

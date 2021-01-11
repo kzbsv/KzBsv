@@ -1,5 +1,5 @@
 ﻿#region Copyright
-// Copyright (c) 2019 TonesNotes
+// Copyright (c) 2020 TonesNotes
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 #endregion
 using Newtonsoft.Json;
@@ -34,7 +34,7 @@ namespace KzBsv
         /// If the script implements a known template, this will be the template type.
         /// Otherwise it will be Unkown.
         /// </summary>
-        protected KzBScriptType _type;
+        protected KzScriptTemplateId _TemplateId;
 
         /// <summary>
         /// The sequence of operations where each operation is an opcode and optional data.
@@ -51,7 +51,7 @@ namespace KzBsv
         public bool IsFinal => _isFinal && _ops.All(op => op.IsFinal);
         public bool IsPub { get => _isPub == true; set => _isPub = value ? (bool?)true : null; }
         public bool IsSig { get => _isPub == false; set => _isPub = value ? (bool?)false : null; }
-        public KzBScriptType Type => _type;
+        public KzScriptTemplateId TemplateId => _TemplateId;
         public long Length => _ops.Sum(o => o.Length);
 
         public static KzBScriptPubP2PKH NewPubP2PKH(KzUInt160 pubKeyHash) => new KzBScriptPubP2PKH(pubKeyHash);
@@ -60,6 +60,10 @@ namespace KzBsv
             => (new KzBScriptPubP2PKH(pubKey.ToHash160()), new KzBScriptSigP2PKH(pubKey));
 
         public KzBScript() { }
+
+        public KzBScript(byte[] script) { Set(new KzScript(script)); }
+
+        public KzBScript(KzScript script) { Set(script); }
 
         public KzBScript Clear() { _ops.Clear(); return this; }
 
@@ -299,5 +303,9 @@ namespace KzBsv
         }
 
         public static implicit operator KzScript(KzBScript sb) => sb.ToScript();
+
+        public static implicit operator KzBScript(KzScript v) {
+            throw new NotImplementedException();
+        }
     }
 }

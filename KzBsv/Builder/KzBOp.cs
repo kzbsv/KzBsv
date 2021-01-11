@@ -1,5 +1,5 @@
 ﻿#region Copyright
-// Copyright (c) 2019 TonesNotes
+// Copyright (c) 2020 TonesNotes
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 #endregion
 using System;
@@ -69,6 +69,12 @@ namespace KzBsv
         public override string ToString()
         {
             return ToVerboseString();
+        }
+
+        public KzPubKey ToPubKey() {
+            var pubKey = new KzPubKey();
+            pubKey.Set(Op.Data.ToSpan());
+            return pubKey.IsValid ? pubKey : null;
         }
     }
 }

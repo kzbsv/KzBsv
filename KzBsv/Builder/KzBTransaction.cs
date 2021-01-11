@@ -1,5 +1,5 @@
 ﻿#region Copyright
-// Copyright (c) 2019 TonesNotes
+// Copyright (c) 2020 TonesNotes
 // Distributed under the Open BSV software license, see the accompanying file LICENSE.
 #endregion
 using System;
@@ -7,14 +7,14 @@ using System.Linq;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.ComponentModel;
 
 namespace KzBsv
 {
 
     /// <summary>
-    /// Allows transaction type specific information to be provided
-    /// such that it can be signed and serialized, either into
-    /// a KzTransaction, or sequence of bytes.
+    /// Support dynamic construction of new Bitcoin transactions.
+    /// See <see cref="KzTransaction"/> for serializing and sending.
     /// </summary>
     public class KzBTransaction
     {
@@ -23,9 +23,9 @@ namespace KzBsv
         public List<KzBTxOut> Vout = new List<KzBTxOut>();
         public UInt32 LockTime = 0;
 
-        public KzUInt256? TxId;
+        public KzUInt256? HashTx;
 
-        public KzAmount? CurrentFee => Vin.Sum(i => i.Value) - Vout.Sum(o => o.Value);
+        public KzAmount? CurrentFee => Vin.Where(i => i.PrevOut.N >= 0).Sum(i => i.Value) - Vout.Sum(o => o.Value);
 
         public KzBTransaction() { }
 
@@ -35,8 +35,24 @@ namespace KzBsv
             Vin = tx.Vin.Cast<KzBTxIn>().ToList();
             Vout = tx.Vout.Cast<KzBTxOut>().ToList();
             LockTime = tx.LockTime;
-            TxId = tx.TxId;
-            if (TxId.Value == KzUInt256.Zero) TxId = null;
+            HashTx = tx.HashTx;
+            if (HashTx.Value == KzUInt256.Zero) HashTx = null;
+        }
+
+        public static KzBTransaction P2PKH
+            ( IEnumerable<(KzPubKey pubKey, long value, byte[] hashTxBytes, int n, byte[] scriptPub)> from
+            , IEnumerable<(KzPubKey pubKey, long value)> to
+            )
+        {
+            var r = new KzBTransaction();
+            foreach (var i in from) r.AddInP2PKH(i.pubKey, i.value, i.hashTxBytes.ToKzUInt256(), i.n, new KzScript(i.scriptPub));
+            foreach (var o in to) r.AddOutP2PKH(o.pubKey, o.value);
+            return r;
+        }
+
+        public void AddInP2PKH(KzPubKey pubKey, KzAmount value, KzUInt256 txId, int n, KzScript scriptPub, UInt32 sequence = KzTxIn.SEQUENCE_FINAL)
+        {
+            Vin.Add(KzBTxIn.FromP2PKH(pubKey, value, txId, n, scriptPub, sequence));
         }
 
         public static KzBTransaction P2PKH(IEnumerable<(KzPubKey pubKey, KzTransaction tx, int n)> from, IEnumerable<(KzPubKey pubKey, long value)> to)
@@ -45,11 +61,6 @@ namespace KzBsv
             foreach (var i in from) r.AddInP2PKH(i.pubKey, i.tx, i.n);
             foreach (var o in to) r.AddOutP2PKH(o.pubKey, o.value);
             return r;
-        }
-
-        public void AddInP2PKH(KzPubKey pubKey, KzAmount value, KzUInt256 txId, int n, KzScript scriptPub, UInt32 sequence = KzTxIn.SEQUENCE_FINAL)
-        {
-            Vin.Add(KzBTxIn.FromP2PKH(pubKey, value, txId, n, scriptPub, sequence));
         }
 
         public void AddInP2PKH(KzPubKey pubKey, KzTransaction tx, int n, UInt32 sequence = KzTxIn.SEQUENCE_FINAL)
@@ -113,28 +124,43 @@ namespace KzBsv
             }
         }
 
-        public void Sign(IEnumerable<KzPrivKey> privKeys)
+        public bool CheckSignatures(IEnumerable<KzPrivKey> privKeys = null) {
+            return Sign(privKeys, confirmExistingSignatures: true);
+        }
+
+        public bool Sign(IEnumerable<KzPrivKey> privKeys = null, bool confirmExistingSignatures = false)
         {
+            var signedOk = true;
             var sigHashType = new KzSigHashType(KzSigHash.ALL | KzSigHash.FORKID);
             var tx = ToTransaction();
+            var nIn = -1;
             foreach (var i in Vin) {
-                if (i.ScriptSig is KzBScriptSigP2PKH) {
-                    var scriptSig = i.ScriptSig as KzBScriptSigP2PKH;
+                nIn++;
+                var scriptSig = i.ScriptSig;
+                if (scriptSig.Ops.Count == 2) {
                     var pubKey = new KzPubKey();
                     pubKey.Set(scriptSig.Ops[1].Op.Data.ToSpan());
-                    var privKey = privKeys.FirstOrDefault(k => k.GetPubKey() == pubKey);
-                    if (privKey != null) {
-                        var sigHash = KzScriptInterpreter.ComputeSignatureHash(i.ScriptPub, tx, 0, sigHashType, i.Tx.Vout[i.N].Value, KzScriptFlags.ENABLE_SIGHASH_FORKID);
-                        var (ok, sig) = privKey.Sign(sigHash);
-                        if (ok) {
-                            var sigWithType = new byte[sig.Length + 1];
-                            sig.CopyTo(sigWithType.AsSpan());
-                            sigWithType[^1] = (byte)sigHashType.rawSigHashType;
-                            scriptSig.Ops[0] = KzOp.Push(sigWithType.AsSpan());
-                        }
-                    }
+                    if (pubKey.IsValid) {
+                        var privKey = i.PrivKey ?? privKeys?.FirstOrDefault(k => k.GetPubKey() == pubKey);
+                        if (privKey != null) {
+                            var value = i.Value ?? i.PrevOutTx?.Vout[i.PrevOutN].Value ?? 0L;
+                            var sigHash = KzScriptInterpreter.ComputeSignatureHash(i.ScriptPub, tx, nIn, sigHashType, value, KzScriptFlags.ENABLE_SIGHASH_FORKID);
+                            var (ok, sig) = privKey.Sign(sigHash);
+                            if (ok) {
+                                var sigWithType = new byte[sig.Length + 1];
+                                sig.CopyTo(sigWithType.AsSpan());
+                                sigWithType[^1] = (byte)sigHashType.rawSigHashType;
+                                var op = KzOp.Push(sigWithType.AsSpan());
+                                if (confirmExistingSignatures)
+                                    signedOk &= op == scriptSig.Ops[0].Op;
+                                else
+                                    scriptSig.Ops[0] = op;
+                            } else signedOk = false;
+                        } else signedOk = false;
+                    } else signedOk = false;
                 }
             }
+            return signedOk;
 #if false
             var tx = txb.ToTransaction();
                 var bytes = tx.ToBytes();
