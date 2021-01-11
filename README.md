@@ -1,9 +1,9 @@
 [KzBsv](https://github.com/kzbsv/KzBsv)
 =
 
-This repository contains the following .NET C#, Visual Studio 2019 compatible projects:
+This repository contains the following .NET C#, Visual Studio 2019 Preview compatible projects:
 
-* [KzBsv](https://github.com/kzbsv/KzBsv/tree/master/KzBsv): Bitcoin SV library for .NET Core 3.0
+* [KzBsv](https://github.com/kzbsv/KzBsv/tree/master/KzBsv): Bitcoin SV library for .NET 5.0
 
 * [bricks](https://github.com/kzbsv/KzBsv/tree/master/bricks): Supporting projects.
 
@@ -17,7 +17,7 @@ This repository contains the following .NET C#, Visual Studio 2019 compatible pr
 Changelog
 -
 
-**v0.1.6**
+**v0.2.0**
 * Current version.
 
 Why C#?
@@ -33,19 +33,15 @@ Scale and performance normally argue for un-managed, un-garbage collected langua
 But with the addition of support for Span\<T>, Memory\<T>, and ReadOnlySequence\<T>, this advantage is shrinking.
 See this [blog post by Johannes Vermorel](https://blog.vermorel.com/journal/2019/1/8/salient-bits-of-cashdb.html) for more information. 
 
-Why .Net Core 3.0 vs .Net Framework?
+Why .Net 5.0?
 -
 
-Unless you're in this space it probably seems silly, but just as Bitcoin has forked, so has the .NET platform. In this case though its a very
-healthy and robustly supported fork by the greater development community and strongly supported by Microsoft.
-
-.Net Core has a primary objective of being platform agnostic. There are development and deployment options for most operating systems and most devices.
-Almost all of the libraries are open source.
-
-.Net Framework is valuable for legacy support which is not relevant here. It dates from Microsoft's former strategy of tight control of their source code.
+.Net 5.0 is the path forward for new work using the .NET platform.
 
 KzBsv Implemementation Status
 -
+
+Version 0.2.0 is a work in process update. For compatibility with other projects released in 2019 use version 0.1.6.
 
 Implementation focus has been to notice and avoid issues for large script values,
 large transactions and very large blocks. One way this is achieved by using chained and reused buffers instead
